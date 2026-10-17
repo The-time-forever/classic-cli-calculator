@@ -16,10 +16,10 @@ export class History {
 
   list() {
     // Return a detached snapshot so callers cannot modify stored entries.
-    return this.#entries;
+    return this.#entries.map((entry) => ({ ...entry }));
   }
 
   clear() {
-    this.#entries = this.#entries;
+    this.#entries = [];
   }
 }
