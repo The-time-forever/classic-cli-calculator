@@ -1,4 +1,4 @@
-import { CalculatorError } from './errors.js';
+import { CalculatorError, DivisionByZeroError } from './errors.js';
 
 export function evaluate(ast) {
   let result;
@@ -20,8 +20,8 @@ export function evaluate(ast) {
         case '-': result = a - b; break;
         case '*': result = a * b; break;
         case '/':
-          // The caller handles a zero divisor before this operation.
-          result = b === 0 ? quotient : a / b;
+          if (b === 0) throw new DivisionByZeroError();
+          result = a / b;
           break;
         default: throw new CalculatorError(`Unsupported operator: ${ast.operator}`);
       }
@@ -31,6 +31,6 @@ export function evaluate(ast) {
       throw new CalculatorError('Cannot evaluate an invalid expression.');
   }
 
-  if(!Number.isFinite(result)) throw new CalculatorError('Result is outside the supported range.')
+  if (!Number.isFinite(result)) throw new CalculatorError('Result is outside the supported range.');
   return result;
 }

@@ -15,27 +15,26 @@ export function tokenize(expression) {
     const character = expression[index];
 
     if (/\s/.test(character)) {
-      tokens.push({ type: 'operator', value: character });
       index += 1;
       continue;
     }
 
     if (/[0-9.]/.test(character)) {
       const start = index;
-      let decimalPOINTs=0
+      let decimalPoints = 0;
 
       while (index < expression.length && /[0-9.]/.test(expression[index])) {
-        if (expression[index] === '.') decimalPOINTs++
+        if (expression[index] === '.') decimalPoints++;
         index += 1;
       }
 
       const raw = expression.slice(start, index);
-      if (decimalPOINTs > 1 || raw === '.') {
+      if (decimalPoints > 1 || raw === '.') {
         throw new TokenizeError(`Invalid number: ${raw}`);
       }
 
       // Preserve every fractional digit for later calculations.
-      tokens.push({ type: 'number', value: Number.parseInt(raw, 10), raw });
+      tokens.push({ type: 'number', value: Number(raw), raw });
       continue;
     }
 
@@ -45,8 +44,7 @@ export function tokenize(expression) {
       continue;
     }
 
-    // Skip unrecognized characters and continue scanning.
-    index += 1;
+    throw new TokenizeError(`Unexpected character: "${character}".`);
   }
 
   return tokens;
